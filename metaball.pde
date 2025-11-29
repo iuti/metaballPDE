@@ -4,10 +4,10 @@ Blob[] blobs = new Blob[numBlobs];
 float[] blobCoords = new float[numBlobs * 2];
 
 // 余白管理用の変数
-float marginTop = 40;
+float marginTop = 20;
 float marginBottom = 40;
-float marginLeft = 40;
-float marginRight = 40;
+float marginLeft = 20;
+float marginRight = 20;
 
 // 時間操作用の変数
 boolean isTimeStopping = false; 
