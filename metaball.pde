@@ -1,5 +1,5 @@
 PShader metaShader;
-int numBlobs = 10; 
+int numBlobs = 12; 
 Blob[] blobs = new Blob[numBlobs];
 float[] blobCoords = new float[numBlobs * 2];
 
@@ -16,6 +16,9 @@ float currentGravity = 0.2;
 
 // イージング用の進行度（0.0 = 通常 〜 1.0 = 完全停止）
 float stopProgress = 0.0; 
+
+// ヒートマップ表示モード
+boolean showHeatmap = false;
 
 void setup() {
   size(800, 800, P2D); 
@@ -72,6 +75,7 @@ void draw() {
   metaShader.set("u_resolution", float(width), float(height));
   metaShader.set("blobs", blobCoords, 2);
   metaShader.set("numBlobs", numBlobs);
+  metaShader.set("showHeatmap", showHeatmap ? 1 : 0);
   
   shader(metaShader);
   rect(0, 0, width, height);
@@ -81,6 +85,7 @@ void draw() {
   fill(255);
   textSize(16);
   text("T Key: Toggle Time Stop", 20, 40);
+  text("G Key: Toggle Heatmap [" + (showHeatmap ? "ON" : "OFF") + "]", 20, 110);
   
   // バーで進行度を表示
   noFill(); stroke(255);
@@ -95,6 +100,9 @@ void draw() {
 void keyReleased() {
   if (key == 't' || key == 'T') {
     isTimeStopping = !isTimeStopping;
+  }
+  if (key == 'g' || key == 'G') {
+    showHeatmap = !showHeatmap;
   }
 }
 

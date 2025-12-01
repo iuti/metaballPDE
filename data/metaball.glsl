@@ -5,6 +5,7 @@ precision mediump float;
 uniform vec2 u_resolution;
 uniform vec2 blobs[100];
 uniform int numBlobs;
+uniform int showHeatmap;
 
 void main() {
     vec2 st = gl_FragCoord.xy;
@@ -52,7 +53,31 @@ void main() {
     float distFromPeak = abs(sum - threshold);
     float t = 1.0 - smoothstep(0.0, range, distFromPeak);
     
-    vec3 finalColor = mix(bgColor, lineColor, t);
+    vec3 finalColor;
+    
+    if (showHeatmap == 1) {
+        // ヒートマップモード: 場の重みを色で可視化
+        float normalizedSum = clamp(sum / 700.0, 0.0, 1.0);
+        
+        // 青 -> シアン -> 緑 -> 黄 -> 赤 のグラデーション
+        vec3 heatColor;
+        if (normalizedSum < 0.25) {
+            heatColor = mix(vec3(0.0, 0.0, 0.5), vec3(0.0, 0.5, 1.0), normalizedSum * 4.0);
+        } else if (normalizedSum < 0.5) {
+            heatColor = mix(vec3(0.0, 0.5, 1.0), vec3(0.0, 1.0, 0.5), (normalizedSum - 0.25) * 4.0);
+        } else if (normalizedSum < 0.75) {
+            heatColor = mix(vec3(0.0, 1.0, 0.5), vec3(1.0, 1.0, 0.0), (normalizedSum - 0.5) * 4.0);
+        } else {
+            heatColor = mix(vec3(1.0, 1.0, 0.0), vec3(1.0, 0.0, 0.0), (normalizedSum - 0.75) * 4.0);
+        }
+        
+        // 閾値ラインを白で表示
+        float thresholdLine = 1.0 - smoothstep(0.0, 8.0, distFromPeak);
+        finalColor = mix(heatColor, vec3(1.0), thresholdLine * 0.8);
+    } else {
+        // 通常モード: 輪郭線のみ
+        finalColor = mix(bgColor, lineColor, t);
+    }
 
     gl_FragColor = vec4(finalColor, 1.0);
 }

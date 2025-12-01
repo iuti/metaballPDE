@@ -24,3 +24,6 @@ Thumbs.db
 build/
 dist/
 *.tmp
+
+# Zenn記事
+article.md
